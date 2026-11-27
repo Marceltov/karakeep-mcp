@@ -1,5 +1,5 @@
 """The tools, one module per area; each has `register(mcp, client)`."""
 
-from . import bookmarks
+from . import assets, bookmarks, highlights, lists, tags
 
-ALL = [bookmarks]
+ALL = [bookmarks, lists, tags, highlights, assets]

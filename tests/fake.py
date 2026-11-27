@@ -60,9 +60,9 @@ def server(*modules) -> FastMCP:
     return mcp
 
 
-async def call(mcp: FastMCP, name: str, **args) -> dict:
+async def call(mcp: FastMCP, tool: str, /, **args) -> dict:
     async with Client(mcp) as c:
-        result = await c.call_tool(name, args)
+        result = await c.call_tool(tool, args)
     return result.structured_content
 
 

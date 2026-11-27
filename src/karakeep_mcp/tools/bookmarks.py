@@ -4,31 +4,25 @@ from typing import Annotated, Literal
 
 from fastmcp import FastMCP
 from fastmcp.exceptions import ToolError
-from mcp.types import ToolAnnotations
 from pydantic import Field
 
 from ..karakeep import KarakeepClient, current_key
 from ..links import Links, Result, page_guidance, slim_bookmark, slim_list
-
-READ = ToolAnnotations(readOnlyHint=True, openWorldHint=True)
-WRITE = ToolAnnotations(readOnlyHint=False, destructiveHint=False, openWorldHint=True)
-DELETE = ToolAnnotations(readOnlyHint=False, destructiveHint=True, openWorldHint=True)
+from ._common import DELETE, READ, WRITE, BookmarkId, Cursor, Limit, caller, given
 
 QUERY = "Words to find, plus Karakeep's qualifiers: #tag, list:name, is:fav, is:archived, after:2026-01-01, before:…, url:example.com."
-BookmarkId = Annotated[str, Field(description="The bookmark's id, from search-bookmarks or another bookmark result.")]
 
 
 def register(mcp: FastMCP, client: KarakeepClient) -> None:
     links = Links(client.settings)
 
-    async def api(method: str, path: str, **kwargs):
-        return await client.request(method, path, key=current_key(), **kwargs)
+    api = caller(client)
 
     @mcp.tool(name="search-bookmarks", annotations=READ)
     async def search_bookmarks(
         query: Annotated[str, Field(description=QUERY)],
-        limit: Annotated[int, Field(ge=1, le=100)] = 10,
-        cursor: Annotated[str | None, Field(description="nextCursor of the previous page.")] = None,
+        limit: Limit = 10,
+        cursor: Cursor = None,
     ) -> Result:
         """Search the signed-in person's bookmarks (full text, titles, notes, tags)."""
         data = await api("GET", "/bookmarks/search", params={"q": query, "limit": limit, "cursor": cursor, "includeContent": "false"})
@@ -74,7 +68,7 @@ def register(mcp: FastMCP, client: KarakeepClient) -> None:
         if type == "text" and not text:
             raise ToolError("A text bookmark needs its text.")
         body = {"type": type, "url": url if type == "link" else None, "text": text if type == "text" else None, "title": title, "note": note}
-        status, data = await client.request_status("POST", "/bookmarks", key=current_key(), json={k: v for k, v in body.items() if v is not None})
+        status, data = await client.request_status("POST", "/bookmarks", key=current_key(), json=given(**body))
         b = slim_bookmark(data, links)
         if status == 200:
             return Result(bookmark=b, already_saved=True, guidance=["This link was already saved; nothing new was created. Give the person its url."])
@@ -93,7 +87,7 @@ def register(mcp: FastMCP, client: KarakeepClient) -> None:
         favourited: bool | None = None,
     ) -> Result:
         """Change a bookmark's title, note, summary, or archived and favourite flags. Only given fields change."""
-        body = {k: v for k, v in {"title": title, "note": note, "summary": summary, "archived": archived, "favourited": favourited}.items() if v is not None}
+        body = given(title=title, note=note, summary=summary, archived=archived, favourited=favourited)
         if not body:
             raise ToolError("Nothing to change: give at least one field.")
         await api("PATCH", f"/bookmarks/{bookmark_id}", json=body)
