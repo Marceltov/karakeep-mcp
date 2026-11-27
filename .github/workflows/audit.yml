@@ -1,0 +1,25 @@
+name: audit
+# Daily, because an advisory arrives without a commit: the runtime dependencies and the published image (repo-setup/security.md).
+on:
+  schedule:
+    - cron: "23 5 * * *"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  pip-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v7
+      # Runtime dependencies only; the project itself and the git-pinned mcp-login-oauth are not on PyPI's advisory feed.
+      - run: uv export --frozen --no-dev --no-emit-project --no-hashes | grep -v '^mcp-login-oauth' > requirements.txt
+      - run: uvx pip-audit --strict --disable-pip --no-deps -r requirements.txt
+  image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: anchore/scan-action@v6
+        with:
+          image: ghcr.io/marceltov/karakeep-mcp:latest
+          only-fixed: true
+          severity-cutoff: high

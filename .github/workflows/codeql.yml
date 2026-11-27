@@ -1,0 +1,19 @@
+name: codeql
+# The shared workflow of Marceltov/engineering-conventions (repo-setup/security.md): CodeQL without the tests.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "41 4 * * 1"
+permissions:
+  contents: read
+jobs:
+  codeql:
+    permissions:
+      contents: read
+      actions: read
+      security-events: write
+    uses: Marceltov/engineering-conventions/.github/workflows/codeql.yml@main
+    with:
+      languages: '["python", "actions"]'
