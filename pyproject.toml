@@ -1,0 +1,40 @@
+[project]
+name = "karakeep-mcp"
+version = "0.1.0"
+description = "Karakeep MCP server: each person's bookmarks for Claude, with an OAuth login"
+license = "MIT"
+license-files = ["LICENSE"]
+readme = "README.md"
+authors = [
+    { name = "Marcel Bruckner", email = "mbruckner94@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "fastmcp>=4.2.6",
+    "httpx>=0.29.0",
+    "mcp-login-oauth",
+    "truststore>=0.10.5",
+]
+
+[build-system]
+requires = ["uv_build>=0.13.1,<0.14.0"]
+build-backend = "uv_build"
+
+[project.scripts]
+karakeep-mcp = "karakeep_mcp.server:main"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["tests"]
+
+[tool.uv.sources]
+mcp-login-oauth = { git = "https://github.com/Marceltov/mcp-login-oauth", rev = "v0.5.0" }
+
+[dependency-groups]
+dev = [
+    "pytest>=9.2.0",
+    "pytest-asyncio>=1.5.0",
+    "respx>=0.23.1",
+    "ruff>=0.17.6",
+]
