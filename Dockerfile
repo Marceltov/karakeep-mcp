@@ -1,4 +1,4 @@
-FROM ghcr.io/astral-sh/uv:0.9 AS uv
+FROM ghcr.io/astral-sh/uv:0.13 AS uv
 
 # Build: git is needed for mcp-login-oauth, which is pinned to a git tag.
 FROM python:3.12-slim AS build
