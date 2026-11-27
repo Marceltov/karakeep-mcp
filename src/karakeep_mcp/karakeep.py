@@ -50,6 +50,10 @@ class KarakeepClient:
             raise KarakeepError(f"Karakeep is not reachable at {self.settings.karakeep_url}: {e}") from e
 
     async def request(self, method: str, path: str, *, key: str, params: dict | None = None, json: Any = None) -> Any:
+        return (await self.request_status(method, path, key=key, params=params, json=json))[1]
+
+    async def request_status(self, method: str, path: str, *, key: str, params: dict | None = None, json: Any = None) -> tuple[int, Any]:
+        """Like `request`, with the HTTP status: Karakeep answers 200 instead of 201 for a link it already has."""
         headers = {"Authorization": f"Bearer {key}"}
         if params:
             params = {k: v for k, v in params.items() if v is not None}
@@ -59,8 +63,8 @@ class KarakeepClient:
         if response.is_error:
             raise KarakeepError(f"Karakeep refused {method} {path} (HTTP {response.status_code}): {_message(response)}")
         if response.status_code == 204 or not response.content:
-            return None
-        return response.json()
+            return response.status_code, None
+        return response.status_code, response.json()
 
     async def trpc(self, procedure: str, input: dict, *, key: str | None = None) -> Any:
         headers = {"Content-Type": "application/json"}
