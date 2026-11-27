@@ -18,7 +18,7 @@ jobs:
   image:
     runs-on: ubuntu-latest
     steps:
-      - uses: anchore/scan-action@v6
+      - uses: anchore/scan-action@v7
         with:
           image: ghcr.io/marceltov/karakeep-mcp:latest
           only-fixed: true
