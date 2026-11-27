@@ -1,0 +1,85 @@
+site_name: karakeep-mcp
+site_description: Karakeep for Claude, each person with their own bookmarks, through an OAuth login.
+site_url: https://karakeep-mcp.marceltov.de/
+repo_url: https://github.com/Marceltov/karakeep-mcp
+repo_name: Marceltov/karakeep-mcp
+edit_uri: edit/main/docs/
+copyright: Copyright &copy; 2026 Marcel Bruckner. Licensed under <a href="https://github.com/Marceltov/karakeep-mcp/blob/main/LICENSE">MIT</a>
+
+hooks:
+  - docs_hooks/roadmap.py
+
+nav:
+  - Home: index.md
+  - What karakeep-mcp stands for: values.md
+  - Start:
+      - Run it: getting-started.md
+      - Connect Claude: connecting.md
+  - Reference:
+      - Tools: tools.md
+      - Configuration: configuration.md
+      - Security: security.md
+  - Contributing:
+      - Development and releases: development.md
+      - Roadmap: roadmap.md
+  - Decisions:
+      - Our own server, not upstream's stdio one: adr/0001-own-server-instead-of-upstreams-stdio-one.md
+
+theme:
+  name: material
+  logo: assets/icon.svg
+  favicon: assets/icon.svg
+  font:
+    text: Atkinson Hyperlegible Next
+    code: Atkinson Hyperlegible Mono
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  features:
+    - navigation.sections
+    - navigation.instant
+    - navigation.footer
+    - navigation.top
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.action.edit
+
+extra_javascript:
+  # Pinned: Material otherwise loads the newest Mermaid 11, whose markup its styles don't all match (javascripts/mermaid.js).
+  - https://unpkg.com/mermaid@11.17.2/dist/mermaid.min.js
+  - javascripts/mermaid.js
+
+extra_css:
+  - stylesheets/extra.css
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format

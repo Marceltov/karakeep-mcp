@@ -1,0 +1,32 @@
+# The roadmap, as data. docs_hooks/roadmap.py (from passageway) renders it as the timeline on the roadmap page.
+#
+# Open entries (status now, next, later or decide) are shown first, in the order of this file, each with a `when` label and `details`.
+# Done entries are shown below them, newest date first (the order of this file breaks ties), each with a `date` and a link to its
+# pull request or release.
+#
+# To finish a step: set `status: done`, replace `when` with `date: YYYY-MM-DD`, add the link to its pull request, and move it to the
+# top of the done entries. `icon` is the name of a Material Design icon (https://pictogrammers.com/library/mdi/).
+# `details` is a small subset of markdown: paragraphs, "- " lists, **bold**, `code` and [links](https://...).
+
+items:
+  # ---- open ------------------------------------------------------------------------------------------------------------
+  - id: smart-lists
+    status: later
+    when: Later
+    icon: playlist-star
+    title: Smart lists
+    summary: Create and change lists that fill themselves from a search query.
+    links:
+      - { label: "V4", url: "https://karakeep-mcp.marceltov.de/values/#v4-karakeeps-own-names-and-behaviour" }
+    details: |
+      Karakeep's API takes `type: smart` with a `query`; the tools only make manual lists so far.
+
+  # ---- done, newest first ----------------------------------------------------------------------------------------------
+  - id: first-release
+    status: done
+    date: 2026-11-27
+    icon: bookmark-outline
+    title: v0.1.0, thirty tools with a per-person login
+    summary: Bookmarks, lists, tags, highlights and assets, each call as the signed-in person, with an API key or email-and-password login.
+    links:
+      - { label: "ADR 0001", url: "https://karakeep-mcp.marceltov.de/adr/0001-own-server-instead-of-upstreams-stdio-one/" }
