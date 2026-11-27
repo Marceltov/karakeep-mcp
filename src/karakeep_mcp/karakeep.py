@@ -15,6 +15,10 @@ class KarakeepError(Exception):
     """A failure Claude should read: the message says what happened and what to do."""
 
 
+class KarakeepUnauthorized(KarakeepError):
+    """Karakeep answered 401: the key is wrong, revoked or expired."""
+
+
 class TrpcError(Exception):
     def __init__(self, code: str, message: str):
         super().__init__(f"{code}: {message}")
@@ -51,7 +55,7 @@ class KarakeepClient:
             params = {k: v for k, v in params.items() if v is not None}
         response = await self._send(method, f"/api/v1{path}", headers=headers, params=params, json=json)
         if response.status_code == 401:
-            raise KarakeepError(RECONNECT)
+            raise KarakeepUnauthorized(RECONNECT)
         if response.is_error:
             raise KarakeepError(f"Karakeep refused {method} {path} (HTTP {response.status_code}): {_message(response)}")
         if response.status_code == 204 or not response.content:
