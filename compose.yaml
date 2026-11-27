@@ -1,0 +1,12 @@
+# The compose file a server runs: put it next to a filled-in copy of .env.example, then
+# `docker compose pull && docker compose up -d`. Settings: .env.example and the docs' Configuration page.
+services:
+  karakeep-mcp:
+    image: ghcr.io/marceltov/karakeep-mcp:main
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "8000:8000"
+    volumes:
+      # The login store. Losing it only means everyone signs in again.
+      - ./data:/data

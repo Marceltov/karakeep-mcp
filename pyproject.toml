@@ -14,6 +14,7 @@ dependencies = [
     "httpx>=0.29.0",
     "mcp-login-oauth",
     "truststore>=0.10.5",
+    "uvicorn>=0.54.0",
 ]
 
 [build-system]
